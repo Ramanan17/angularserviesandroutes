@@ -10,21 +10,41 @@ import {DataService} from '../../services/data.service'
 })
 
 export class SandboxComponent{
-   users={
-       name:'',
-       email:'',
-       phone:''
+    users:any[];
+    user = {
+        name:'',
+        email:'',
+        phone:''
+    }
 
-   }
-    onSubmit({value,valid}){
-        if(valid)
-        {
-            console.log(value)
-        }
-        else{
-            console.log('Form is invalid')
-        }
-     
+    constructor(public dataService:DataService)
+    {
+        this.dataService.getUsers().subscribe(users => {
+            //console.log(users);
+            this.users = users;
+        });
+    }
 
-   }
+    onSubmit(){
+        this.dataService.addUsers(this.user).subscribe(user => {
+            console.log(user);
+            this.users.unshift(user);
+        });
+    }
+    onDelete(id)
+    {
+        this.dataService.deleteUsers(id).subscribe(res =>{
+            for(let i=0;i<this.users.length;i++)
+            {
+                if(this.users[i].id==id)
+                {
+                    this.users.splice(id,1)
+                }
+
+            }
+
+        });
+       // console.log(id)
+
+    }
 }
